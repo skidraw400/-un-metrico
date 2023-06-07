@@ -40,17 +40,17 @@ function SetValue() {
 }
 
 const animation = [
-    { transform: "translate(4px, 0px)" },
-    { transform: "translate(-6px, 0px)" },
+    { transform: "translate(14px, 0px)" },
+    { transform: "translate(-16px, 0px)" },
     { transform: "translate(-2px, 0px)" },
-    { transform: "translate(6px, 0px)" },
+    { transform: "translate(16px, 0px)" },
     { transform: "translate(1px, 0px)" },
-    { transform: "translate(-4px, 0px)" },
-    { transform: "translate(-7px, 0px)" },
-    { transform: "translate(5px, 0px)" },
-    { transform: "translate(-3px, 0px)" },
-    { transform: "translate(6px, 0px)" },
-    { transform: "translate(9px, 0px)" }
+    { transform: "translate(-14px, 0px)" },
+    { transform: "translate(-17px, 0px)" },
+    { transform: "translate(15px, 0px)" },
+    { transform: "translate(-13px, 0px)" },
+    { transform: "translate(16px, 0px)" },
+    { transform: "translate(19px, 0px)" }
 ];
 
 const newspaperTiming = {
@@ -59,7 +59,7 @@ const newspaperTiming = {
 };
 
 function GetValue() {
-    if (Math.floor(GlobalInput.value) == value) {
+    if (Math.floor(GlobalInput.value) == value || Math.floor(GlobalInput.value) == value+1 || Math.floor(GlobalInput.value) == value-1 ) {
         SetValue();
         GlobalInput.value = "";
     } else {
