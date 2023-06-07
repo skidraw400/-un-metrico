@@ -29,9 +29,9 @@ function SetValue() {
     let oldvalue = value;
     let lock = 0;
     while (oldvalue == value && lock < 5) {
-        let source = 5*Number.parseFloat(
+        let source = 5*(Number.parseFloat(
             MinRange + Math.floor(Math.random() * (MaxRange - MinRange)))
-            .toFixed(0);
+            .toFixed(0));
         QuestionText.innerHTML = source + "mph";
         Body.style.backgroundColor = getRandomDarkColor();
         value = Number.parseFloat(source * 1.609344).toFixed(0);
