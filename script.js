@@ -1,7 +1,7 @@
 value = 0;
 
 MinRange = 1;
-MaxRange = 10;
+MaxRange = 120;
 
 let SettingsHiddenToggle = document.getElementById("settings-tohide");
 let GlobalInput = document.getElementById("global");
