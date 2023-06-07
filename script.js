@@ -1,7 +1,7 @@
 value = 0;
 
 MinRange = 1;
-MaxRange = 120;
+MaxRange = 24;
 
 let SettingsHiddenToggle = document.getElementById("settings-tohide");
 let GlobalInput = document.getElementById("global");
@@ -29,7 +29,7 @@ function SetValue() {
     let oldvalue = value;
     let lock = 0;
     while (oldvalue == value && lock < 5) {
-        let source = Number.parseFloat(
+        let source = 5*Number.parseFloat(
             MinRange + Math.floor(Math.random() * (MaxRange - MinRange)))
             .toFixed(0);
         QuestionText.innerHTML = source + "mph";
