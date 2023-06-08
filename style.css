@@ -22,7 +22,7 @@ body {
     overflow: hidden;
     position: absolute;
     padding-left: 2%;
-    font-size: 3em;
+    font-size: 5em;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: rgba(255, 255, 255, 0.338);
     z-index: 3;
