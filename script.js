@@ -68,7 +68,7 @@ const newspaperTiming = {
 function GetValue() {
     Element.Difference.innerHTML = Math.abs(Element.AnswerInput.value - value);
     console.log("Precision: ", precision, "Range: ", MaxRange/precision, "difference" , Math.abs(Element.AnswerInput.value - value), "answer", value);
-    if (Math.abs(Element.AnswerInput.value - value) <= precision) {
+    if (Math.abs(Math.floor(Element.AnswerInput.value) - value) <= precision) {
         SetValue();
         Element.AnswerInput.value = "";
     } else {
