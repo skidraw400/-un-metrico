@@ -81,7 +81,7 @@ function GetValue() {
 
 Element.AnswerInput.addEventListener("keyup", function (event) {
     if (event.key === "," || event.key === ".") {
-        Element.AnswerInput.value = AnswerInput.value.slice(0, -1);
+        Element.AnswerInput.value = Element.AnswerInput.value.slice(0, -1);
         GetValue();
     }
     if (event.key === "Enter") {
