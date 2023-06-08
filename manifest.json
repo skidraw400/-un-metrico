@@ -1,6 +1,6 @@
 {
-    "name": "Metrico converter quiz",
-    "short_name": "Metricp",
+    "name": "(un)metrico converter quiz",
+    "short_name": "(un)metrico",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#fff",

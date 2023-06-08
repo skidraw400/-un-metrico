@@ -1,19 +1,25 @@
 value = 0;
 
-MinRange = 1;
-MaxRange = 24;
+const Element = {
+    SettingsToggle: document.getElementById("settings-tohide"),
+    AnswerInput: document.getElementById("global"),
+    QuestionText: document.getElementById("question"),
+    Body: document.getElementById("body"),
+    Difference: document.getElementById("diff"),
+    PrecisionOption: document.getElementById("requiredprecision")
+}
 
-let SettingsHiddenToggle = document.getElementById("settings-tohide");
-let GlobalInput = document.getElementById("global");
-let QuestionText = document.getElementById("question");
-let Body = document.getElementById("body");
+let precision = Element.PrecisionOption.value;
+
+let MinRange = 1;
+let MaxRange = 120;
 
 function toggleSettings() {
 
-    if (SettingsHiddenToggle.style.display === "none") {
-        SettingsHiddenToggle.style.display = "block";
+    if (Element.SettingsToggle.style.display === "none") {
+        Element.SettingsToggle.style.display = "block";
     } else {
-        SettingsHiddenToggle.style.display = "none";
+        Element.SettingsToggle.style.display = "none";
     }
 }
 
@@ -28,12 +34,13 @@ function getRandomDarkColor() {
 function SetValue() {
     let oldvalue = value;
     let lock = 0;
+    precision = Element.PrecisionOption.value;
     while (oldvalue == value && lock < 5) {
-        let source = 5*(Number.parseFloat(
-            MinRange + Math.floor(Math.random() * (MaxRange - MinRange)))
+        let source = precision*(Number.parseFloat(
+            MinRange + Math.floor(Math.random() * (MaxRange/precision - MinRange)))
             .toFixed(0));
-        QuestionText.innerHTML = source + "mph";
-        Body.style.backgroundColor = getRandomDarkColor();
+        Element.QuestionText.innerHTML = source + "mph";
+        Element.Body.style.backgroundColor = getRandomDarkColor();
         value = Number.parseFloat(source * 1.609344).toFixed(0);
         lock++;
     }
@@ -59,20 +66,22 @@ const newspaperTiming = {
 };
 
 function GetValue() {
-    if (Math.floor(GlobalInput.value) == value || Math.floor(GlobalInput.value) == value+1 || Math.floor(GlobalInput.value) == value-1 ) {
+    Element.Difference.innerHTML = Math.abs(Element.AnswerInput.value - value);
+    console.log("Precision: ", precision, "Range: ", MaxRange/precision, "difference" , Math.abs(Element.AnswerInput.value - value), "answer", value);
+    if (Math.abs(Element.AnswerInput.value - value) <= precision) {
         SetValue();
-        GlobalInput.value = "";
+        Element.AnswerInput.value = "";
     } else {
-        GlobalInput.animate(animation, newspaperTiming);
+        Element.AnswerInput.animate(animation, newspaperTiming);
         setTimeout(function () {
-            GlobalInput.value = "";
+            Element.AnswerInput.value = "";
         }, 200);
     }
 }
 
-GlobalInput.addEventListener("keyup", function (event) {
+Element.AnswerInput.addEventListener("keyup", function (event) {
     if (event.key === "," || event.key === ".") {
-        GlobalInput.value = GlobalInput.value.slice(0, -1);
+        Element.AnswerInput.value = AnswerInput.value.slice(0, -1);
         GetValue();
     }
     if (event.key === "Enter") {

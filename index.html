@@ -1,21 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json" />
-    <title>Document</title>
+    <title>(un)metrico</title>
 </head>
+
 <body id="body">
     <div class="settings" onclick="toggleSettings()">
-        Settings
+        menu
         <div id="settings-tohide" style="display: none;">
-            1. jednostki
+            <div id="diff">
+                
+            </div>
+            <div class="option">
+                <input type="number" value="5" id="requiredprecision" onclick="toggleSettings()">
+            </div>
         </div>
     </div>
-    
+
     <div class="text-input">
         <div class="question-text">
             <div id="question" style="position: absolute; bottom:0; width: 100%;">
@@ -27,4 +34,5 @@
     <script src="script.js"></script>
     <script>SetValue();</script>
 </body>
+
 </html>
