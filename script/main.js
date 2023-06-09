@@ -103,7 +103,9 @@ function GetValue() {
         el.s_ans.value = "";
     } else {
         el.s_ans.animate(animation, animationTiming);
-        el.s_ans.value = "";
+        setTimeout(function() {
+            el.s_ans.value = "";
+        }, 300);
     }
     console.log(input, answer);
 }
