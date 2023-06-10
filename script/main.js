@@ -8,7 +8,9 @@ function SetElements() {
     el.s_theme = document.getElementById('theme');
     el.s_maincolor = document.getElementById('i_maincolor');
     el.s_bgcolor = document.getElementById('i_bgcolor');
+    el.s_hidelogo = document.getElementById('i_hidelogo');
     el.last = document.getElementById('menulast');
+    el.logo = document.getElementById('menulogo');
 }
 
 // preferences
@@ -16,12 +18,18 @@ let pref = {
     "accuracy": 0,
     "units": 0,
     "maincolor": "#FFFFFF",
-    "bgcolor": "dynamic"
+    "bgcolor": "dynamic",
+    "hidelogo": 0
 }
 
 function SavePref() {
     localStorage.setItem("accuracy", el.s_acc.value);
     localStorage.setItem("units", el.s_units.value);
+    if (el.s_hidelogo.checked == true) {
+        localStorage.setItem("hidelogo", 1);
+    } else {
+        localStorage.setItem("hidelogo", 0);
+    }
     if (el.s_theme.selectedIndex != 0) {
         if (el.s_theme.value == 1) {
             localStorage.setItem("maincolor", "#000000");
@@ -40,8 +48,12 @@ function SavePref() {
             localStorage.setItem("bgcolor", "#2a3001");
         }
     } else {
-        localStorage.setItem("maincolor", el.s_maincolor.value);
-        localStorage.setItem("bgcolor", el.s_bgcolor.value);
+        if (el.s_maincolor.value != "") {
+            localStorage.setItem("maincolor", el.s_maincolor.value);
+        }
+        if (el.s_bgcolor.value != "") {
+            localStorage.setItem("bgcolor", el.s_bgcolor.value);
+        }
         console.log("maincolor: ", localStorage.getItem("maincolor"));
     }
     ReadPref();
@@ -51,27 +63,42 @@ function SavePref() {
 function ReadPref() {
     if (localStorage.getItem('accuracy') !== null) {
         pref.accuracy = localStorage.getItem('accuracy');
-        console.log(pref.accuracy);
     }
+    console.log("accuracy", pref.accuracy);
     el.s_acc.selectedIndex = pref.accuracy;
+
     if (localStorage.getItem('units') !== null) {
         pref.units = localStorage.getItem('units');
-        console.log(pref.units);
     }
+    console.log("units", pref.units);
+    el.s_units.selectedIndex = pref.units;
+
     if (localStorage.getItem('maincolor') !== null) {
         pref.maincolor = localStorage.getItem('maincolor');
-        console.log(pref.maincolor);
     }
+    console.log("maincolor", pref.maincolor);
+
     if (localStorage.getItem('bgcolor') !== null) {
         pref.bgcolor = localStorage.getItem('bgcolor');
-        console.log(pref.bgcolor);
     }
+    console.log("bgcolor", pref.bgcolor);
+
+    if (localStorage.getItem("hidelogo") !== null) {
+        pref.hidelogo = localStorage.getItem("hidelogo");
+    }
+    if (pref.hidelogo == 1) {
+        el.s_hidelogo.checked = true;
+        el.logo.innerHTML = "";
+    } else {
+        el.s_hidelogo.checked = false;
+        el.logo.innerHTML = "(un)metrico";
+    }
+    console.log("hidelogo", pref.hidelogo);
 }
 
 // Generating question
 let answer;
 function SetValue() {
-
     if (answer) {
         el.last.innerHTML = "Last: " + answer;
     }
@@ -109,6 +136,10 @@ function SetValue() {
     answer = Math.round((value + firstModifier) * multiplier + secModifier);
     el.s_que.innerHTML = value + name;
     console.log("value", value, "answer", answer);
+    if (answer < 0) {
+        console.log("negative");
+        SetValue();
+    }
     Generate_Background();
 }
 
