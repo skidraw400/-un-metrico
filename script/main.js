@@ -6,6 +6,8 @@ function SetElements() {
     el.s_que = document.getElementById('question');
     el.s_ans = document.getElementById('answerinput');
     el.s_theme = document.getElementById('theme');
+    el.s_maincolor = document.getElementById('i_maincolor');
+    el.s_bgcolor = document.getElementById('i_bgcolor');
     el.last = document.getElementById('menulast');
 }
 
@@ -13,13 +15,35 @@ function SetElements() {
 let pref = {
     "accuracy": 0,
     "units": 0,
-    "theme": 0
+    "maincolor": "#FFFFFF",
+    "bgcolor": "dynamic"
 }
 
 function SavePref() {
     localStorage.setItem("accuracy", el.s_acc.value);
     localStorage.setItem("units", el.s_units.value);
-    localStorage.setItem("theme", el.s_theme.value);
+    if (el.s_theme.selectedIndex != 0) {
+        if (el.s_theme.value == 1) {
+            localStorage.setItem("maincolor", "#000000");
+            localStorage.setItem("bgcolor", "dynamic");
+        } else if (el.s_theme.value == 2) {
+            localStorage.setItem("maincolor", "#FFFFFF");
+            localStorage.setItem("bgcolor", "#212529");
+        } else if (el.s_theme.value == 3) {
+            localStorage.setItem("maincolor", "#212529");
+            localStorage.setItem("bgcolor", "#FFFFFF");
+        } else if (el.s_theme.value == 4) {
+            localStorage.setItem("maincolor", "#FFFFFF");
+            localStorage.setItem("bgcolor", "#000000");
+        } else if (el.s_theme.value == 5) {
+            localStorage.setItem("maincolor", "#e0d8b4");
+            localStorage.setItem("bgcolor", "#2a3001");
+        }
+    } else {
+        localStorage.setItem("maincolor", el.s_maincolor.value);
+        localStorage.setItem("bgcolor", el.s_bgcolor.value);
+        console.log("maincolor: ", localStorage.getItem("maincolor"));
+    }
     ReadPref();
     SetValue();
 }
@@ -34,12 +58,14 @@ function ReadPref() {
         pref.units = localStorage.getItem('units');
         console.log(pref.units);
     }
-    el.s_theme.selectedIndex = pref.units;
-    if (localStorage.getItem('theme') !== null) {
-        pref.theme = localStorage.getItem('theme');
-        console.log(pref.theme);
+    if (localStorage.getItem('maincolor') !== null) {
+        pref.maincolor = localStorage.getItem('maincolor');
+        console.log(pref.maincolor);
     }
-    el.s_theme.selectedIndex = pref.theme;
+    if (localStorage.getItem('bgcolor') !== null) {
+        pref.bgcolor = localStorage.getItem('bgcolor');
+        console.log(pref.bgcolor);
+    }
 }
 
 // Generating question
@@ -80,7 +106,7 @@ function SetValue() {
         secModifier = 32;
     }
     let value = Math.floor(Math.random() * (min + max)) - min;
-    answer = Number.parseFloat((value + firstModifier) * multiplier + secModifier).toFixed(0);
+    answer = Math.round((value + firstModifier) * multiplier + secModifier);
     el.s_que.innerHTML = value + name;
     console.log("value", value, "answer", answer);
     Generate_Background();
@@ -103,7 +129,7 @@ function GetValue() {
         el.s_ans.value = "";
     } else {
         el.s_ans.animate(animation, animationTiming);
-        setTimeout(function() {
+        setTimeout(function () {
             el.s_ans.value = "";
         }, 300);
     }
@@ -114,20 +140,14 @@ function GetValue() {
 function Generate_Background() {
     var bgcolor = '#';
     var color = '#';
-    if (pref.theme == 0) {
+    if (pref.bgcolor == "dynamic") {
         for (var i = 0; i < 6; i++) {
             bgcolor += Math.floor(Math.random() * 10);
         }
         color = "#FFFFFF";
-    } else if (pref.theme == 1) {
-        bgcolor = "#212529";
-        color = "#FFFFFF";
-    } else if (pref.theme == 2) {
-        bgcolor = "#000000";
-        color = "#FFFFFF";
-    } else if (pref.theme == 3) {
-        bgcolor = "#e0d8b4";
-        color = "#2a3001";
+    } else {
+        color = pref.maincolor;
+        bgcolor = pref.bgcolor;
     }
     el.s_que.style.color = color;
     el.s_ans.style.color = color;

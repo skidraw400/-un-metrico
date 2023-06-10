@@ -29,14 +29,14 @@
   <nav class="navbar navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
       <!-- bar -->
-      <a class="navbar-brand">(un)metrico</a>
-      <a class="navbar-brand" id="menulast"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
         aria-controls="offcanvasDarkNavbar">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <a class="navbar-brand">(un)metrico</a>
+      <a class="navbar-brand" id="menulast"></a>
       <!-- content -->
-      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
+      <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
         aria-labelledby="offcanvasDarkNavbarLabel">
         <!-- title -->
         <div class="offcanvas-header">
@@ -72,16 +72,30 @@
 
           <div class="border rounded p-2 mt-3">
             <label>Theme</label>
-            <select class="form-select" aria-label="Theme" id="theme">
-              <option value="0">Colorful</option>
-              <option value="1">Dark</option>
-              <option value="2">OLED</option>
-              <option value="3">Olive</option>
-              <option disabled>more soon</option>
+            <select class="form-select mt-2" aria-label="Theme" id="theme">
+              <option disabled selected value="0">select theme</option>
+              <option value="1">Colorful</option>
+              <option value="2">Dark</option>
+              <option value="3">Light</option>
+              <option value="4">OLED</option>
+              <option value="5">Olive</option>
             </select>
-          </div>
 
-          <button type="button" class="btn btn-secondary mt-3 w-100" onclick="SavePref();">Save</button>
+            <div class="border rounded p-2 mt-3">
+              <label>Or use custom</label>
+              <form>
+                <label>text color</label>
+                <input type="text" class="form-control my-2" id="i_maincolor" placeholder="#FFFFFF"
+                  pattern="^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
+                <label>background color</label>
+                <input type="text" class="form-control my-2" id="i_bgcolor" placeholder="#000000"
+                  pattern="^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
+              </form>
+            </div>
+
+          </div>
+          <button type="button" class="btn btn-secondary mt-3 w-100" onclick="SavePref();" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">Save</button>
 
         </div>
       </div>
