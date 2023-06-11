@@ -14,7 +14,7 @@ function SetElements() {
 }
 
 // preferences
-let Preference = {
+const Preference = {
     "accuracy": 0,
     "units": 0,
     "maincolor": "#FFFFFF",
