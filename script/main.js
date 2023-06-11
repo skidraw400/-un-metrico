@@ -54,7 +54,6 @@ function SavePref() {
         if (el.s_bgcolor.value != "") {
             localStorage.setItem("bgcolor", el.s_bgcolor.value);
         }
-        console.log("maincolor: ", localStorage.getItem("maincolor"));
     }
     ReadPref();
     SetValue();
@@ -160,11 +159,10 @@ function GetValue() {
         el.s_ans.value = "";
     } else {
         el.s_ans.animate(animation, animationTiming);
-        setTimeout(function () {
+        setTimeout(() => {
             el.s_ans.value = "";
         }, 300);
     }
-    console.log(input, answer);
 }
 
 // generate page background
