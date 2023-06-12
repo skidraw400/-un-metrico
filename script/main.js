@@ -1,16 +1,18 @@
 // (re)declaring html locations
 const PageElement = {}
 function SetElements() {
+    PageElement.i_que = document.getElementById('question');
+    PageElement.i_ans = document.getElementById('answerinput');
     PageElement.s_acc = document.getElementById('acc');
     PageElement.s_units = document.getElementById('units');
-    PageElement.s_que = document.getElementById('question');
-    PageElement.s_ans = document.getElementById('answerinput');
     PageElement.s_theme = document.getElementById('theme');
     PageElement.s_maincolor = document.getElementById('i_maincolor');
     PageElement.s_bgcolor = document.getElementById('i_bgcolor');
     PageElement.s_hidelogo = document.getElementById('i_hidelogo');
-    PageElement.last = document.getElementById('menulast');
-    PageElement.logo = document.getElementById('menulogo');
+    PageElement.o_last = document.getElementById('menulast');
+    PageElement.o_logo = document.getElementById('menulogo');
+    PageElement.ts_primary = document.getElementById('ts-primary');
+    PageElement.ts_background = document.getElementById('ts-background');
 }
 
 // preferences
@@ -19,131 +21,88 @@ const Preference = {
     "units": 0,
     "maincolor": "#FFFFFF",
     "bgcolor": "dynamic",
-    "hidelogo": 0
+    "hidelogo": false
 }
 
 function SavePref() {
     localStorage.setItem("accuracy", PageElement.s_acc.value);
     localStorage.setItem("units", PageElement.s_units.value);
-    if (PageElement.s_hidelogo.checked == true) {
-        localStorage.setItem("hidelogo", 1);
-    } else {
-        localStorage.setItem("hidelogo", 0);
-    }
-    if (PageElement.s_theme.selectedIndex != 0) {
-        if (PageElement.s_theme.value == 1) {
-            localStorage.setItem("maincolor", "#000000");
-            localStorage.setItem("bgcolor", "dynamic");
-        } else if (PageElement.s_theme.value == 2) {
-            localStorage.setItem("maincolor", "#FFFFFF");
-            localStorage.setItem("bgcolor", "#212529");
-        } else if (PageElement.s_theme.value == 3) {
-            localStorage.setItem("maincolor", "#212529");
-            localStorage.setItem("bgcolor", "#FFFFFF");
-        } else if (PageElement.s_theme.value == 4) {
-            localStorage.setItem("maincolor", "#FFFFFF");
-            localStorage.setItem("bgcolor", "#000000");
-        } else if (PageElement.s_theme.value == 5) {
-            localStorage.setItem("maincolor", "#e0d8b4");
-            localStorage.setItem("bgcolor", "#2a3001");
-        }
-    } else {
-        if (PageElement.s_maincolor.value != "") {
-            localStorage.setItem("maincolor", PageElement.s_maincolor.value);
-        }
-        if (PageElement.s_bgcolor.value != "") {
-            localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
-        }
-    }
+    localStorage.setItem("hidelogo", PageElement.s_hidelogo.checked || ""); // setting an empty string, which will be parsed as false
+    localStorage.setItem("maincolor", PageElement.s_maincolor.value);
+    localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
+    PageElement.s_theme.selectedIndex = 0;
     ReadPref();
     SetValue();
 }
 
 function ReadPref() {
-    if (localStorage.getItem('accuracy') !== null) {
-        Preference.accuracy = localStorage.getItem('accuracy');
-    }
-    console.log("accuracy", Preference.accuracy);
+    Preference.accuracy = localStorage.getItem('accuracy') || 0;
     PageElement.s_acc.selectedIndex = Preference.accuracy;
 
-    if (localStorage.getItem('units') !== null) {
-        Preference.units = localStorage.getItem('units');
-    }
-    console.log("units", Preference.units);
+    Preference.units = localStorage.getItem('units') || 0;
     PageElement.s_units.selectedIndex = Preference.units;
 
-    if (localStorage.getItem('maincolor') !== null) {
-        Preference.maincolor = localStorage.getItem('maincolor');
-    }
-    console.log("maincolor", Preference.maincolor);
+    Preference.maincolor = localStorage.getItem('maincolor') || "#FFFFFF";
+    PageElement.s_maincolor.value = Preference.maincolor;
 
-    if (localStorage.getItem('bgcolor') !== null) {
-        Preference.bgcolor = localStorage.getItem('bgcolor');
-    }
-    console.log("bgcolor", Preference.bgcolor);
+    Preference.bgcolor = localStorage.getItem('bgcolor') || "dynamic";
+    PageElement.s_bgcolor.value = Preference.bgcolor;
 
-    if (localStorage.getItem("hidelogo") !== null) {
-        Preference.hidelogo = localStorage.getItem("hidelogo");
+    PreviewTheme();
+
+    Preference.hidelogo = localStorage.getItem("hidelogo") || false;
+    PageElement.s_hidelogo.checked = Preference.hidelogo;
+    if (Preference.hidelogo) PageElement.o_logo.innerHTML = "";
+    else PageElement.o_logo.innerHTML = "(un)metrico";
+
+    console.log("settings", {
+        "accuracy": Preference.accuracy,
+        "units": Preference.units,
+        "maincolor": Preference.maincolor,
+        "bgcolor": Preference.bgcolor,
+        "hidelogo": Preference.hidelogo
+    })
+}
+
+
+function CalculateValue(unitType, min, max) {
+    let sourceUnit, convertedUnit, sourceValue, randomConvertedValue;
+    randomConvertedValue = Math.round(Math.random() * (max - min) + min);
+    if (unitType == 0) {
+        convertedUnit = "km/h";
+        sourceUnit = "mph";
+        sourceValue = randomConvertedValue / 1.60934;
+    } else if (unitType == 1) {
+        convertedUnit = "mph";
+        sourceUnit = "km/h";
+        sourceValue = randomConvertedValue * 1.60934;
+    } else if (unitType == 2) {
+        convertedUnit = "°C";
+        sourceUnit = "°F";
+        sourceValue = (randomConvertedValue * 9 / 5) + 32;
+    } else if (unitType == 3) {
+        convertedUnit = "°F";
+        sourceUnit = "°C";
+        sourceValue = (randomConvertedValue - 32) * 5 / 9;
     }
-    if (Preference.hidelogo == 1) {
-        PageElement.s_hidelogo.checked = true;
-        PageElement.logo.innerHTML = "";
-    } else {
-        PageElement.s_hidelogo.checked = false;
-        PageElement.logo.innerHTML = "(un)metrico";
-    }
-    console.log("hidelogo", Preference.hidelogo);
+    return [Math.round(sourceValue), randomConvertedValue, sourceUnit, convertedUnit];
 }
 
 // Generating question
 let answer;
 function SetValue() {
-    if (answer) {
-        PageElement.last.innerHTML = "Last: " + answer;
-    }
-
-    let name = "";
-    let max = 100;
-    let min = 0;
-    let multiplier = 0;
-    let firstModifier = 0;
-    let secModifier = 0;
-    if (Preference.units == 0) {
-        name = "mph";
-        min = 0;
-        max = 125;
-        multiplier = 1.6093440006147;
-    } else if (Preference.units == 1) {
-        name = "km/h";
-        min = 0;
-        max = 200;
-        multiplier = 0.621371191999997;
-    } else if (Preference.units == 2) {
-        name = "°F";
-        min = 0;
-        max = 125;
-        multiplier = 0.55555555555555;
-        firstModifier = -32;
-    } else if (Preference.units == 3) {
-        name = "°C";
-        min = 0;
-        max = 125;
-        multiplier = 1.8;
-        secModifier = 32;
-    }
-    let value = Math.floor(Math.random() * (min + max)) - min;
-    answer = Math.round((value + firstModifier) * multiplier + secModifier);
-    PageElement.s_que.innerHTML = value + name;
+    if (answer) PageElement.o_last.innerHTML = "Last: " + answer;
+    let values = CalculateValue(Preference.units, 0, 100);
+    let value = values[0];
+    const sourceUnit = values[2];
+    answer = values[1];
+    PageElement.i_que.innerHTML = value + sourceUnit;
     console.log("value", value, "answer", answer);
-    if (answer < 0) {
-        console.log("negative");
-        SetValue();
-    }
-    Generate_Background();
+    SetColors();
 }
 
 function GetValue() {
-    let input = PageElement.s_ans.value.replace(/\D/g, '');
+    let input = PageElement.i_ans.value.replace(/\D/g, '');
     let acc = 1;
     if (Preference.accuracy == 0) {
         acc = 1;
@@ -156,35 +115,44 @@ function GetValue() {
     }
     if (Math.abs(Math.floor(input) - answer) <= acc) {
         SetValue();
-        PageElement.s_ans.value = "";
+        PageElement.i_ans.value = "";
     } else {
-        PageElement.s_ans.animate(animation, animationTiming);
+        PageElement.i_ans.animate(animation, animationTiming);
         setTimeout(() => {
-            PageElement.s_ans.value = "";
+            PageElement.i_ans.value = "";
         }, 300);
     }
 }
 
-// generate page background
-function Generate_Background() {
-    var bgcolor = '#';
+function PreviewTheme() {
+    PageElement.ts_background.style.backgroundColor = ResolveColor(PageElement.s_bgcolor.value);
+    PageElement.ts_primary.style.color = ResolveColor(PageElement.s_maincolor.value);
+}
+
+function SetThemeInputs(primary, background) {
+    PageElement.s_maincolor.value = primary;
+    PageElement.s_bgcolor.value = background;
+    PreviewTheme();
+}
+
+function SetColors() {
+    PageElement.i_que.style.color = ResolveColor(Preference.maincolor);
+    PageElement.i_ans.style.color = ResolveColor(Preference.maincolor);
+    document.body.style.backgroundColor = ResolveColor(Preference.bgcolor);
+}
+
+
+function ResolveColor(color) {
+    if (color != "dynamic") return color;
     var color = '#';
-    if (Preference.bgcolor == "dynamic") {
-        for (var i = 0; i < 6; i++) {
-            bgcolor += Math.floor(Math.random() * 10);
-        }
-        color = "#FFFFFF";
-    } else {
-        color = Preference.maincolor;
-        bgcolor = Preference.bgcolor;
+    for (var i = 0; i < 6; i++) {
+        color += Math.floor(Math.random() * 10);
     }
-    PageElement.s_que.style.color = color;
-    PageElement.s_ans.style.color = color;
-    document.body.style.backgroundColor = bgcolor;
+    return color;
 }
 
 function AddInputListener() {
-    PageElement.s_ans.addEventListener("keyup", function (event) {
+    PageElement.i_ans.addEventListener("keyup", function (event) {
         if (event.key === "," || event.key === "." || event.key === "Enter") {
             GetValue();
         }
