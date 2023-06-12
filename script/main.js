@@ -30,31 +30,7 @@ function SavePref() {
     localStorage.setItem("hidelogo", PageElement.s_hidelogo.checked || ""); // setting an empty string, which will be parsed as false
     localStorage.setItem("maincolor", PageElement.s_maincolor.value);
     localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
-    // if (PageElement.s_theme.selectedIndex != 0) {
-    //     if (PageElement.s_theme.value == 1) {
-    //         localStorage.setItem("maincolor", "#000000");
-    //         localStorage.setItem("bgcolor", "dynamic");
-    //     } else if (PageElement.s_theme.value == 2) {
-    //         localStorage.setItem("maincolor", "#FFFFFF");
-    //         localStorage.setItem("bgcolor", "#212529");
-    //     } else if (PageElement.s_theme.value == 3) {
-    //         localStorage.setItem("maincolor", "#212529");
-    //         localStorage.setItem("bgcolor", "#FFFFFF");
-    //     } else if (PageElement.s_theme.value == 4) {
-    //         localStorage.setItem("maincolor", "#FFFFFF");
-    //         localStorage.setItem("bgcolor", "#000000");
-    //     } else if (PageElement.s_theme.value == 5) {
-    //         localStorage.setItem("maincolor", "#e0d8b4");
-    //         localStorage.setItem("bgcolor", "#2a3001");
-    //     }
-    // } else {
-    //     if (PageElement.s_maincolor.value != "") {
-    //         localStorage.setItem("maincolor", PageElement.s_maincolor.value);
-    //     }
-    //     if (PageElement.s_bgcolor.value != "") {
-    //         localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
-    //     }
-    // }
+    PageElement.s_theme.selectedIndex = 0;
     ReadPref();
     SetValue();
 }

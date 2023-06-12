@@ -72,12 +72,13 @@
                         <li class="list-group-item py-3">
                             <h5>Theme</h5>
                             <select class="form-select mt-2" aria-label="Theme" id="theme" onchange="let args = this.value.split(' '); SetThemeInputs(args[0], args[1])">
-                                <option selected disabled value="()">current</option>
-                                <option value="dynamic black">Colorful (default)</option>
-                                <option value="blue black">Dark</option>
-                                <option value="violet white">Light</option>
-                                <option value="red orange">OLED</option>
-                                <option value="green #000000">Olive</option>
+                                <option selected disabled></option>
+                                <option value="white dynamic">Colorful (default)</option>
+                                <option value="white #212529">Dark</option>
+                                <option value="white black">OLED</option>
+                                <option value="#2a3001 #e0d8b4">Olive</option>
+                                <option value="#00FF41 black">Matrix</option>
+                                <option value="#ffcc00 #3d3d3d">pop</option>
                             </select>
                             <div id="ts-background" class="rounded border p-2 my-2">
                                 <div id="ts-primary" class="fs-2 w-100 text-center">Aa</div>
