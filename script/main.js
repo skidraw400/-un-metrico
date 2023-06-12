@@ -11,6 +11,8 @@ function SetElements() {
     PageElement.s_hidelogo = document.getElementById('i_hidelogo');
     PageElement.o_last = document.getElementById('menulast');
     PageElement.o_logo = document.getElementById('menulogo');
+    PageElement.ts_primary = document.getElementById('ts-primary');
+    PageElement.ts_background = document.getElementById('ts-background');
 }
 
 // preferences
@@ -26,31 +28,33 @@ function SavePref() {
     localStorage.setItem("accuracy", PageElement.s_acc.value);
     localStorage.setItem("units", PageElement.s_units.value);
     localStorage.setItem("hidelogo", PageElement.s_hidelogo.checked || ""); // setting an empty string, which will be parsed as false
-    if (PageElement.s_theme.selectedIndex != 0) {
-        if (PageElement.s_theme.value == 1) {
-            localStorage.setItem("maincolor", "#000000");
-            localStorage.setItem("bgcolor", "dynamic");
-        } else if (PageElement.s_theme.value == 2) {
-            localStorage.setItem("maincolor", "#FFFFFF");
-            localStorage.setItem("bgcolor", "#212529");
-        } else if (PageElement.s_theme.value == 3) {
-            localStorage.setItem("maincolor", "#212529");
-            localStorage.setItem("bgcolor", "#FFFFFF");
-        } else if (PageElement.s_theme.value == 4) {
-            localStorage.setItem("maincolor", "#FFFFFF");
-            localStorage.setItem("bgcolor", "#000000");
-        } else if (PageElement.s_theme.value == 5) {
-            localStorage.setItem("maincolor", "#e0d8b4");
-            localStorage.setItem("bgcolor", "#2a3001");
-        }
-    } else {
-        if (PageElement.s_maincolor.value != "") {
-            localStorage.setItem("maincolor", PageElement.s_maincolor.value);
-        }
-        if (PageElement.s_bgcolor.value != "") {
-            localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
-        }
-    }
+    localStorage.setItem("maincolor", PageElement.s_maincolor.value);
+    localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
+    // if (PageElement.s_theme.selectedIndex != 0) {
+    //     if (PageElement.s_theme.value == 1) {
+    //         localStorage.setItem("maincolor", "#000000");
+    //         localStorage.setItem("bgcolor", "dynamic");
+    //     } else if (PageElement.s_theme.value == 2) {
+    //         localStorage.setItem("maincolor", "#FFFFFF");
+    //         localStorage.setItem("bgcolor", "#212529");
+    //     } else if (PageElement.s_theme.value == 3) {
+    //         localStorage.setItem("maincolor", "#212529");
+    //         localStorage.setItem("bgcolor", "#FFFFFF");
+    //     } else if (PageElement.s_theme.value == 4) {
+    //         localStorage.setItem("maincolor", "#FFFFFF");
+    //         localStorage.setItem("bgcolor", "#000000");
+    //     } else if (PageElement.s_theme.value == 5) {
+    //         localStorage.setItem("maincolor", "#e0d8b4");
+    //         localStorage.setItem("bgcolor", "#2a3001");
+    //     }
+    // } else {
+    //     if (PageElement.s_maincolor.value != "") {
+    //         localStorage.setItem("maincolor", PageElement.s_maincolor.value);
+    //     }
+    //     if (PageElement.s_bgcolor.value != "") {
+    //         localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
+    //     }
+    // }
     ReadPref();
     SetValue();
 }
@@ -63,8 +67,12 @@ function ReadPref() {
     PageElement.s_units.selectedIndex = Preference.units;
 
     Preference.maincolor = localStorage.getItem('maincolor') || "#FFFFFF";
+    PageElement.s_maincolor.value = Preference.maincolor;
 
     Preference.bgcolor = localStorage.getItem('bgcolor') || "dynamic";
+    PageElement.s_bgcolor.value = Preference.bgcolor;
+
+    PreviewTheme();
 
     Preference.hidelogo = localStorage.getItem("hidelogo") || false;
     PageElement.s_hidelogo.checked = Preference.hidelogo;
@@ -114,7 +122,7 @@ function SetValue() {
     answer = values[1];
     PageElement.i_que.innerHTML = value + sourceUnit;
     console.log("value", value, "answer", answer);
-    Generate_Background();
+    SetColors();
 }
 
 function GetValue() {
@@ -140,22 +148,31 @@ function GetValue() {
     }
 }
 
-// generate page background
-function Generate_Background() {
-    var bgcolor = '#';
+function PreviewTheme() {
+    PageElement.ts_background.style.backgroundColor = ResolveColor(PageElement.s_bgcolor.value);
+    PageElement.ts_primary.style.color = ResolveColor(PageElement.s_maincolor.value);
+}
+
+function SetThemeInputs(primary, background) {
+    PageElement.s_maincolor.value = primary;
+    PageElement.s_bgcolor.value = background;
+    PreviewTheme();
+}
+
+function SetColors() {
+    PageElement.i_que.style.color = ResolveColor(Preference.maincolor);
+    PageElement.i_ans.style.color = ResolveColor(Preference.maincolor);
+    document.body.style.backgroundColor = ResolveColor(Preference.bgcolor);
+}
+
+
+function ResolveColor(color) {
+    if (color != "dynamic") return color;
     var color = '#';
-    if (Preference.bgcolor == "dynamic") {
-        for (var i = 0; i < 6; i++) {
-            bgcolor += Math.floor(Math.random() * 10);
-        }
-        color = "#FFFFFF";
-    } else {
-        color = Preference.maincolor;
-        bgcolor = Preference.bgcolor;
+    for (var i = 0; i < 6; i++) {
+        color += Math.floor(Math.random() * 10);
     }
-    PageElement.i_que.style.color = color;
-    PageElement.i_ans.style.color = color;
-    document.body.style.backgroundColor = bgcolor;
+    return color;
 }
 
 function AddInputListener() {

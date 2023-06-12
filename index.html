@@ -71,23 +71,21 @@
                         </li>
                         <li class="list-group-item py-3">
                             <h5>Theme</h5>
-                            <select class="form-select mt-2" aria-label="Theme" id="theme">
-                                <option selected value="0">select theme</option>
-                                <option value="1">Colorful (default)</option>
-                                <option value="2">Dark</option>
-                                <option value="3">Light</option>
-                                <option value="4">OLED</option>
-                                <option value="5">Olive</option>
+                            <select class="form-select mt-2" aria-label="Theme" id="theme" onchange="let args = this.value.split(' '); SetThemeInputs(args[0], args[1])">
+                                <option selected disabled value="()">current</option>
+                                <option value="dynamic black">Colorful (default)</option>
+                                <option value="blue black">Dark</option>
+                                <option value="violet white">Light</option>
+                                <option value="red orange">OLED</option>
+                                <option value="green #000000">Olive</option>
                             </select>
-                        </li>
-                        <li class="list-group-item py-3">
-                            <h5>Custom colors:</h5>
+                            <div id="ts-background" class="rounded border p-2 my-2">
+                                <div id="ts-primary" class="fs-2 w-100 text-center">Aa</div>
+                            </div>
                             <label>Text color</label>
-                            <input type="text" class="form-control my-2" id="i_maincolor"
-                                pattern="^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
+                            <input type="text" class="form-control my-2" id="i_maincolor" oninput="PreviewTheme();">
                             <label>Background color</label>
-                            <input type="text" class="form-control my-2" id="i_bgcolor"
-                                pattern="^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$">
+                            <input type="text" class="form-control my-2" id="i_bgcolor" oninput="PreviewTheme();">
                         </li>
                         <li class="list-group-item py-3">
                             <input class="form-check-input me-1" type="checkbox" id="i_hidelogo">
