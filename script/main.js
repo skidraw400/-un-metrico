@@ -19,17 +19,13 @@ const Preference = {
     "units": 0,
     "maincolor": "#FFFFFF",
     "bgcolor": "dynamic",
-    "hidelogo": 0
+    "hidelogo": false
 }
 
 function SavePref() {
     localStorage.setItem("accuracy", PageElement.s_acc.value);
     localStorage.setItem("units", PageElement.s_units.value);
-    if (PageElement.s_hidelogo.checked == true) {
-        localStorage.setItem("hidelogo", 1);
-    } else {
-        localStorage.setItem("hidelogo", 0);
-    }
+    localStorage.setItem("hidelogo", PageElement.s_hidelogo.checked || ""); // setting an empty string, which will be parsed as false
     if (PageElement.s_theme.selectedIndex != 0) {
         if (PageElement.s_theme.value == 1) {
             localStorage.setItem("maincolor", "#000000");
@@ -60,34 +56,21 @@ function SavePref() {
 }
 
 function ReadPref() {
-    if (localStorage.getItem('accuracy') !== null) {
-        Preference.accuracy = localStorage.getItem('accuracy');
-    }
+    Preference.accuracy = localStorage.getItem('accuracy') || 0;
     PageElement.s_acc.selectedIndex = Preference.accuracy;
 
-    if (localStorage.getItem('units') !== null) {
-        Preference.units = localStorage.getItem('units');
-    }
+    Preference.units = localStorage.getItem('units') || 0;
     PageElement.s_units.selectedIndex = Preference.units;
 
-    if (localStorage.getItem('maincolor') !== null) {
-        Preference.maincolor = localStorage.getItem('maincolor');
-    }
+    Preference.maincolor = localStorage.getItem('maincolor') || "#FFFFFF";
 
-    if (localStorage.getItem('bgcolor') !== null) {
-        Preference.bgcolor = localStorage.getItem('bgcolor');
-    }
+    Preference.bgcolor = localStorage.getItem('bgcolor') || "dynamic";
 
-    if (localStorage.getItem("hidelogo") !== null) {
-        Preference.hidelogo = localStorage.getItem("hidelogo");
-    }
-    if (Preference.hidelogo == 1) {
-        PageElement.s_hidelogo.checked = true;
-        PageElement.logo.innerHTML = "";
-    } else {
-        PageElement.s_hidelogo.checked = false;
-        PageElement.logo.innerHTML = "(un)metrico";
-    }
+    Preference.hidelogo = localStorage.getItem("hidelogo") || false;
+    PageElement.s_hidelogo.checked = Preference.hidelogo;
+    if (Preference.hidelogo) PageElement.logo.innerHTML = "";
+    else PageElement.logo.innerHTML = "(un)metrico";
+
     console.log("settings", {
         "accuracy": Preference.accuracy,
         "units": Preference.units,
