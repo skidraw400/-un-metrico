@@ -63,24 +63,20 @@ function ReadPref() {
     if (localStorage.getItem('accuracy') !== null) {
         Preference.accuracy = localStorage.getItem('accuracy');
     }
-    console.log("accuracy", Preference.accuracy);
     PageElement.s_acc.selectedIndex = Preference.accuracy;
 
     if (localStorage.getItem('units') !== null) {
         Preference.units = localStorage.getItem('units');
     }
-    console.log("units", Preference.units);
     PageElement.s_units.selectedIndex = Preference.units;
 
     if (localStorage.getItem('maincolor') !== null) {
         Preference.maincolor = localStorage.getItem('maincolor');
     }
-    console.log("maincolor", Preference.maincolor);
 
     if (localStorage.getItem('bgcolor') !== null) {
         Preference.bgcolor = localStorage.getItem('bgcolor');
     }
-    console.log("bgcolor", Preference.bgcolor);
 
     if (localStorage.getItem("hidelogo") !== null) {
         Preference.hidelogo = localStorage.getItem("hidelogo");
@@ -92,53 +88,49 @@ function ReadPref() {
         PageElement.s_hidelogo.checked = false;
         PageElement.logo.innerHTML = "(un)metrico";
     }
-    console.log("hidelogo", Preference.hidelogo);
+    console.log("settings", {
+        "accuracy": Preference.accuracy,
+        "units": Preference.units,
+        "maincolor": Preference.maincolor,
+        "bgcolor": Preference.bgcolor,
+        "hidelogo": Preference.hidelogo
+    })
+}
+
+
+function CalculateValue(unitType, min, max) {
+    let sourceUnit, convertedUnit, sourceValue, randomConvertedValue;
+    randomConvertedValue = Math.round(Math.random() * (max - min) + min);
+    if (unitType == 0) {
+        convertedUnit = "km/h";
+        sourceUnit = "mph";
+        sourceValue = randomConvertedValue / 1.60934;
+    } else if (unitType == 1) {
+        convertedUnit = "mph";
+        sourceUnit = "km/h";
+        sourceValue = randomConvertedValue * 1.60934;
+    } else if (unitType == 2) {
+        convertedUnit = "°C";
+        sourceUnit = "°F";
+        sourceValue = (randomConvertedValue * 9 / 5) + 32;
+    } else if (unitType == 3) {
+        convertedUnit = "°F";
+        sourceUnit = "°C";
+        sourceValue = (randomConvertedValue - 32) * 5 / 9;
+    }
+    return [Math.round(sourceValue), randomConvertedValue, sourceUnit, convertedUnit];
 }
 
 // Generating question
 let answer;
 function SetValue() {
-    if (answer) {
-        PageElement.last.innerHTML = "Last: " + answer;
-    }
-
-    let name = "";
-    let max = 100;
-    let min = 0;
-    let multiplier = 0;
-    let firstModifier = 0;
-    let secModifier = 0;
-    if (Preference.units == 0) {
-        name = "mph";
-        min = 0;
-        max = 125;
-        multiplier = 1.6093440006147;
-    } else if (Preference.units == 1) {
-        name = "km/h";
-        min = 0;
-        max = 200;
-        multiplier = 0.621371191999997;
-    } else if (Preference.units == 2) {
-        name = "°F";
-        min = 0;
-        max = 125;
-        multiplier = 0.55555555555555;
-        firstModifier = -32;
-    } else if (Preference.units == 3) {
-        name = "°C";
-        min = 0;
-        max = 125;
-        multiplier = 1.8;
-        secModifier = 32;
-    }
-    let value = Math.floor(Math.random() * (min + max)) - min;
-    answer = Math.round((value + firstModifier) * multiplier + secModifier);
-    PageElement.s_que.innerHTML = value + name;
+    if (answer) PageElement.last.innerHTML = "Last: " + answer;
+    let values = CalculateValue(Preference.units, 0, 100);
+    let value = values[0];
+    const sourceUnit = values[2];
+    answer = values[1];
+    PageElement.s_que.innerHTML = value + sourceUnit;
     console.log("value", value, "answer", answer);
-    if (answer < 0) {
-        console.log("negative");
-        SetValue();
-    }
     Generate_Background();
 }
 
