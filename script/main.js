@@ -1,16 +1,16 @@
 // (re)declaring html locations
 const PageElement = {}
 function SetElements() {
+    PageElement.i_que = document.getElementById('question');
+    PageElement.i_ans = document.getElementById('answerinput');
     PageElement.s_acc = document.getElementById('acc');
     PageElement.s_units = document.getElementById('units');
-    PageElement.s_que = document.getElementById('question');
-    PageElement.s_ans = document.getElementById('answerinput');
     PageElement.s_theme = document.getElementById('theme');
     PageElement.s_maincolor = document.getElementById('i_maincolor');
     PageElement.s_bgcolor = document.getElementById('i_bgcolor');
     PageElement.s_hidelogo = document.getElementById('i_hidelogo');
-    PageElement.last = document.getElementById('menulast');
-    PageElement.logo = document.getElementById('menulogo');
+    PageElement.o_last = document.getElementById('menulast');
+    PageElement.o_logo = document.getElementById('menulogo');
 }
 
 // preferences
@@ -68,8 +68,8 @@ function ReadPref() {
 
     Preference.hidelogo = localStorage.getItem("hidelogo") || false;
     PageElement.s_hidelogo.checked = Preference.hidelogo;
-    if (Preference.hidelogo) PageElement.logo.innerHTML = "";
-    else PageElement.logo.innerHTML = "(un)metrico";
+    if (Preference.hidelogo) PageElement.o_logo.innerHTML = "";
+    else PageElement.o_logo.innerHTML = "(un)metrico";
 
     console.log("settings", {
         "accuracy": Preference.accuracy,
@@ -107,18 +107,18 @@ function CalculateValue(unitType, min, max) {
 // Generating question
 let answer;
 function SetValue() {
-    if (answer) PageElement.last.innerHTML = "Last: " + answer;
+    if (answer) PageElement.o_last.innerHTML = "Last: " + answer;
     let values = CalculateValue(Preference.units, 0, 100);
     let value = values[0];
     const sourceUnit = values[2];
     answer = values[1];
-    PageElement.s_que.innerHTML = value + sourceUnit;
+    PageElement.i_que.innerHTML = value + sourceUnit;
     console.log("value", value, "answer", answer);
     Generate_Background();
 }
 
 function GetValue() {
-    let input = PageElement.s_ans.value.replace(/\D/g, '');
+    let input = PageElement.i_ans.value.replace(/\D/g, '');
     let acc = 1;
     if (Preference.accuracy == 0) {
         acc = 1;
@@ -131,11 +131,11 @@ function GetValue() {
     }
     if (Math.abs(Math.floor(input) - answer) <= acc) {
         SetValue();
-        PageElement.s_ans.value = "";
+        PageElement.i_ans.value = "";
     } else {
-        PageElement.s_ans.animate(animation, animationTiming);
+        PageElement.i_ans.animate(animation, animationTiming);
         setTimeout(() => {
-            PageElement.s_ans.value = "";
+            PageElement.i_ans.value = "";
         }, 300);
     }
 }
@@ -153,13 +153,13 @@ function Generate_Background() {
         color = Preference.maincolor;
         bgcolor = Preference.bgcolor;
     }
-    PageElement.s_que.style.color = color;
-    PageElement.s_ans.style.color = color;
+    PageElement.i_que.style.color = color;
+    PageElement.i_ans.style.color = color;
     document.body.style.backgroundColor = bgcolor;
 }
 
 function AddInputListener() {
-    PageElement.s_ans.addEventListener("keyup", function (event) {
+    PageElement.i_ans.addEventListener("keyup", function (event) {
         if (event.key === "," || event.key === "." || event.key === "Enter") {
             GetValue();
         }
