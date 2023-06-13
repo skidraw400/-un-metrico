@@ -1,6 +1,6 @@
 /**
  * (un)metrico main source code
- * © 2023 <skidraw400@gmail.com>
+ * © 2023 skidraw400 <skidraw400@gmail.com>
  * @author skidraw400
  */
 
@@ -26,8 +26,8 @@ function SetElements() {
 const Preference = {
     "accuracy": 0,
     "units": 0,
-    "maincolor": "#FFFFFF",
-    "bgcolor": "dynamic",
+    "maincolor": "random-light",
+    "bgcolor": "#212529",
     "hidelogo": false
 }
 
@@ -51,10 +51,10 @@ function ReadPref() {
     Preference.units = localStorage.getItem('units') || 0;
     PageElement.s_units.selectedIndex = Preference.units;
 
-    Preference.maincolor = localStorage.getItem('maincolor') || "#FFFFFF";
+    Preference.maincolor = localStorage.getItem('maincolor') || "random-light";
     PageElement.s_maincolor.value = Preference.maincolor;
 
-    Preference.bgcolor = localStorage.getItem('bgcolor') || "dynamic";
+    Preference.bgcolor = localStorage.getItem('bgcolor') || "#212529";
     PageElement.s_bgcolor.value = Preference.bgcolor;
 
     PreviewTheme();
@@ -77,31 +77,73 @@ function ReadPref() {
 function CalculateValue(unitType, min, max) {
     let sourceUnit, convertedUnit, sourceValue, randomConvertedValue;
     randomConvertedValue = Math.round(Math.random() * (max - min) + min);
-    if (unitType == 0) {
-        convertedUnit = "km/h";
-        sourceUnit = "mph";
-        sourceValue = randomConvertedValue / 1.60934;
-    } else if (unitType == 1) {
-        convertedUnit = "mph";
-        sourceUnit = "km/h";
-        sourceValue = randomConvertedValue * 1.60934;
-    } else if (unitType == 2) {
-        convertedUnit = "°C";
-        sourceUnit = "°F";
-        sourceValue = (randomConvertedValue * 9 / 5) + 32;
-    } else if (unitType == 3) {
-        convertedUnit = "°F";
-        sourceUnit = "°C";
-        sourceValue = (randomConvertedValue - 32) * 5 / 9;
+    switch (unitType.toString()) {
+        case "0":
+            convertedUnit = "km/h";
+            sourceUnit = "mph";
+            sourceValue = randomConvertedValue / 1.60934;
+            break;
+        case "1":
+            convertedUnit = "mph";
+            sourceUnit = "km/h";
+            sourceValue = randomConvertedValue * 1.60934;
+            break;
+        case "2":
+            convertedUnit = "°C";
+            sourceUnit = "°F";
+            sourceValue = (randomConvertedValue * 9 / 5) + 32;
+            break;
+        case "3":
+            convertedUnit = "°F";
+            sourceUnit = "°C";
+            sourceValue = (randomConvertedValue - 32) * 5 / 9;
+            break;
+        case "4":
+            convertedUnit = "cm";
+            sourceUnit = "inch";
+            sourceValue = randomConvertedValue / 2.54;
+            break;
+        case "5":
+            convertedUnit = "inch";
+            sourceUnit = "cm";
+            sourceValue = randomConvertedValue * 2.54;
+            break;
     }
     return [Math.round(sourceValue), randomConvertedValue, sourceUnit, convertedUnit];
 }
 
-// Generating and displaying question
+// Choosing right range, generating and displaying question
 let answer;
 function SetValue() {
     if (answer) PageElement.o_last.innerHTML = "Last: " + answer;
-    let values = CalculateValue(Preference.units, 0, 100);
+    var min, max;
+    switch (Preference.units.toString()) {
+        case "0": //answer in km/h
+            min = 5
+            max = 250
+            break;
+        case "1": //answer in mph
+            min = 5
+            max = 150
+            break;
+        case "2": //answer in °C
+            min = 0
+            max = 250
+            break;
+        case "3": //answer in °F
+            min = 0
+            max = 500
+            break;
+        case "4": //answer in inches
+            min = 5
+            max = 40
+            break;
+        case "5": //answer in cm
+            min = 5
+            max = 100
+            break;
+    }
+    let values = CalculateValue(Preference.units, min, max);
     let value = values[0];
     const sourceUnit = values[2];
     answer = values[1];
@@ -114,7 +156,7 @@ function SetValue() {
 function GetValue() {
     let input = PageElement.i_ans.value.replace(/\D/g, '');
     let acc = 1;
-    switch (Preference.accuracy) {
+    switch (Preference.accuracy.toString()) {
         case "0": acc = 1; break;
         case "1": acc = 3; break;
         case "2": acc = 5; break;
@@ -153,16 +195,31 @@ function SetColors() {
 
 // Define custom color values for i.e. random/custom values
 function ResolveColor(color) {
+    let answer = color;
     switch (color) {
-        case "dynamic":
-            newColor = '#';
+        case "random-dark":
+            answer = "#";
             for (var i = 0; i < 6; i++) {
-                newColor += Math.floor(Math.random() * 10);
+                answer += Math.floor(Math.random() * 8);
             }
-            return newColor;
+            break;
+        case "random-light":
+            answer = '#';
+            var hexLetters = 'BCDEF'.split('');
+            for (var i = 0; i < 6; i++) {
+                answer += hexLetters[Math.floor(Math.random() * hexLetters.length)];
+            }
+            break;
+        case "random":
+            answer = '#';
+            var hexLetters = '0123456789ABCDEF'.split('');
+            for (var i = 0; i < 6; i++) {
+                answer += hexLetters[Math.floor(Math.random() * hexLetters.length)];
+            }
         default:
-            return color;
+            break;
     }
+    return answer
 }
 
 // Adding input listener to answer input

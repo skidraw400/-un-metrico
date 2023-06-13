@@ -63,10 +63,12 @@
                         <li class="list-group-item py-3">
                             <h5>Units</h5>
                             <select class="form-select" name="Unit selector" aria-label="Units" id="units">
-                                <option value="0">mph -> km/h</option>
-                                <option value="1">km/h -> mph</option>
-                                <option value="2">°F -> °C</option>
-                                <option value="3">°C -> °F</option>
+                                <option value="0">mph ➜ km/h</option>
+                                <option value="1">km/h ➜ mph</option>
+                                <option value="2">°F ➜ °C</option>
+                                <option value="3">°C ➜ °F</option>
+                                <option value="4">inch ➜ cm</option>
+                                <option value="4">cm ➜ inch</option>
                             </select>
                         </li>
                         <li class="list-group-item py-3">
@@ -74,8 +76,8 @@
                             <select class="form-select mt-2" aria-label="Theme" id="theme" name="Theme selector"
                                 onchange="let args = SetThemeInputs(this.value.split(' ')[0], this.value.split(' ')[1])">
                                 <option selected disabled></option>
-                                <option value="white dynamic">Colorful (default)</option>
-                                <option value="white #212529">Dark</option>
+                                <option value="random-light #212529">Dark (default)</option>
+                                <option value="white random-dark">Colorful</option>
                                 <option value="white black">OLED</option>
                                 <option value="#2a3001 #e0d8b4">Olive</option>
                                 <option value="#00FF41 black">Matrix</option>
