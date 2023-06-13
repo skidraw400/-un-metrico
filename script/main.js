@@ -5,8 +5,12 @@
  */
 
 
+// variable for current answer, and for answers streak
+let answer;
+let streak = 0;
+
 // (re)declaring html locations
-const PageElement = {}
+const PageElement = {};
 function SetElements() {
     PageElement.i_que = document.getElementById('question');
     PageElement.i_ans = document.getElementById('answerinput');
@@ -29,7 +33,7 @@ const Preference = {
     "maincolor": "random-light",
     "bgcolor": "#212529",
     "hidelogo": false
-}
+};
 
 // saving js preferences to localstorage
 function SavePref() {
@@ -40,6 +44,7 @@ function SavePref() {
     localStorage.setItem("bgcolor", PageElement.s_bgcolor.value);
     PageElement.s_theme.selectedIndex = 0;
     ReadPref();
+    streak = 0;
     SetValue();
 }
 
@@ -70,12 +75,12 @@ function ReadPref() {
         "maincolor": Preference.maincolor,
         "bgcolor": Preference.bgcolor,
         "hidelogo": Preference.hidelogo
-    })
+    });
 }
 
 // core code for calculating question and answer
 function CalculateValue(unitType, min, max) {
-    let sourceUnit, convertedUnit, sourceValue, randomConvertedValue;
+    var sourceUnit, convertedUnit, sourceValue, randomConvertedValue;
     randomConvertedValue = Math.round(Math.random() * (max - min) + min);
     switch (unitType.toString()) {
         case "0":
@@ -113,40 +118,40 @@ function CalculateValue(unitType, min, max) {
 }
 
 // Choosing right range, generating and displaying question
-let answer;
+
 function SetValue() {
-    if (answer) PageElement.o_last.innerHTML = "Last: " + answer;
+    if (answer) PageElement.o_last.innerHTML = "Streak: " + streak + " last: " + answer;
     var min, max;
     switch (Preference.units.toString()) {
         case "0": //answer in km/h
-            min = 5
-            max = 250
+            min = 5;
+            max = 250;
             break;
         case "1": //answer in mph
-            min = 5
-            max = 150
+            min = 5;
+            max = 150;
             break;
         case "2": //answer in °C
-            min = 0
-            max = 250
+            min = 0;
+            max = 250;
             break;
         case "3": //answer in °F
-            min = 0
-            max = 500
+            min = 0;
+            max = 500;
             break;
         case "4": //answer in inches
-            min = 5
-            max = 40
+            min = 5;
+            max = 40;
             break;
         case "5": //answer in cm
-            min = 5
-            max = 100
+            min = 5;
+            max = 100;
             break;
     }
-    let values = CalculateValue(Preference.units, min, max);
-    let value = values[0];
-    const sourceUnit = values[2];
-    answer = values[1];
+    var calculatedValues = CalculateValue(Preference.units, min, max);
+    var value = calculatedValues[0];
+    const sourceUnit = calculatedValues[2];
+    answer = calculatedValues[1];
     PageElement.i_que.innerHTML = value + sourceUnit;
     console.debug("value", value, "answer", answer);
     SetColors();
@@ -154,8 +159,8 @@ function SetValue() {
 
 // verifying input and displaying result
 function GetValue() {
-    let input = PageElement.i_ans.value.replace(/\D/g, '');
-    let acc = 1;
+    var input = PageElement.i_ans.value.replace(/\D/g, '');
+    var acc = 1;
     switch (Preference.accuracy.toString()) {
         case "0": acc = 1; break;
         case "1": acc = 3; break;
@@ -163,11 +168,12 @@ function GetValue() {
         case "3": acc = 10; break;
     }
     if (Math.abs(Math.floor(input) - answer) <= acc) {
+        streak += 1;
         SetValue();
         PageElement.i_ans.value = "";
     } else {
         PageElement.i_ans.animate(animation, animationTiming);
-        setTimeout(() => {
+        setTimeout(function () {
             PageElement.i_ans.value = "";
         }, 300);
     }
@@ -195,31 +201,35 @@ function SetColors() {
 
 // Define custom color values for i.e. random/custom values
 function ResolveColor(color) {
-    let answer = color;
+    var answer = color;
     switch (color) {
-        case "random-dark":
+        case "random-dark": {
             answer = "#";
-            for (var i = 0; i < 6; i++) {
+            for (let i = 0; i < 6; i++) {
                 answer += Math.floor(Math.random() * 8);
             }
             break;
-        case "random-light":
+        }
+        case "random-light": {
             answer = '#';
-            var hexLetters = 'BCDEF'.split('');
+            let hexLetters = 'BCDEF'.split('');
+            for (let i = 0; i < 6; i++) {
+                answer += hexLetters[Math.floor(Math.random() * hexLetters.length)];
+            }
+            break;
+        }
+        case "random": {
+            answer = '#';
+            let hexLetters = '0123456789ABCDEF'.split('');
             for (var i = 0; i < 6; i++) {
                 answer += hexLetters[Math.floor(Math.random() * hexLetters.length)];
             }
             break;
-        case "random":
-            answer = '#';
-            var hexLetters = '0123456789ABCDEF'.split('');
-            for (var i = 0; i < 6; i++) {
-                answer += hexLetters[Math.floor(Math.random() * hexLetters.length)];
-            }
+        }
         default:
             break;
     }
-    return answer
+    return answer;
 }
 
 // Adding input listener to answer input
