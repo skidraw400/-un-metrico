@@ -1,3 +1,10 @@
+/**
+ * (un)metrico main source code
+ * © 2023 <skidraw400@gmail.com>
+ * @author skidraw400
+ */
+
+
 // (re)declaring html locations
 const PageElement = {}
 function SetElements() {
@@ -15,7 +22,7 @@ function SetElements() {
     PageElement.ts_background = document.getElementById('ts-background');
 }
 
-// preferences
+// js preferences storing
 const Preference = {
     "accuracy": 0,
     "units": 0,
@@ -24,6 +31,7 @@ const Preference = {
     "hidelogo": false
 }
 
+// saving js preferences to localstorage
 function SavePref() {
     localStorage.setItem("accuracy", PageElement.s_acc.value);
     localStorage.setItem("units", PageElement.s_units.value);
@@ -35,6 +43,7 @@ function SavePref() {
     SetValue();
 }
 
+// reading js preferences from localstorage to js, also defaults redefinition
 function ReadPref() {
     Preference.accuracy = localStorage.getItem('accuracy') || 0;
     PageElement.s_acc.selectedIndex = Preference.accuracy;
@@ -55,7 +64,7 @@ function ReadPref() {
     if (Preference.hidelogo) PageElement.o_logo.innerHTML = "";
     else PageElement.o_logo.innerHTML = "(un)metrico";
 
-    console.log("settings", {
+    console.debug("settings", {
         "accuracy": Preference.accuracy,
         "units": Preference.units,
         "maincolor": Preference.maincolor,
@@ -64,7 +73,7 @@ function ReadPref() {
     })
 }
 
-
+// core code for calculating question and answer
 function CalculateValue(unitType, min, max) {
     let sourceUnit, convertedUnit, sourceValue, randomConvertedValue;
     randomConvertedValue = Math.round(Math.random() * (max - min) + min);
@@ -88,7 +97,7 @@ function CalculateValue(unitType, min, max) {
     return [Math.round(sourceValue), randomConvertedValue, sourceUnit, convertedUnit];
 }
 
-// Generating question
+// Generating and displaying question
 let answer;
 function SetValue() {
     if (answer) PageElement.o_last.innerHTML = "Last: " + answer;
@@ -97,21 +106,19 @@ function SetValue() {
     const sourceUnit = values[2];
     answer = values[1];
     PageElement.i_que.innerHTML = value + sourceUnit;
-    console.log("value", value, "answer", answer);
+    console.debug("value", value, "answer", answer);
     SetColors();
 }
 
+// verifying input and displaying result
 function GetValue() {
     let input = PageElement.i_ans.value.replace(/\D/g, '');
     let acc = 1;
-    if (Preference.accuracy == 0) {
-        acc = 1;
-    } else if (Preference.accuracy == 1) {
-        acc = 3;
-    } else if (Preference.accuracy == 2) {
-        acc = 5;
-    } else if (Preference.accuracy == 3) {
-        acc = 10;
+    switch (Preference.accuracy) {
+        case "0": acc = 1; break;
+        case "1": acc = 3; break;
+        case "2": acc = 5; break;
+        case "3": acc = 10; break;
     }
     if (Math.abs(Math.floor(input) - answer) <= acc) {
         SetValue();
@@ -124,33 +131,41 @@ function GetValue() {
     }
 }
 
+// Preview theme in preferences
 function PreviewTheme() {
     PageElement.ts_background.style.backgroundColor = ResolveColor(PageElement.s_bgcolor.value);
     PageElement.ts_primary.style.color = ResolveColor(PageElement.s_maincolor.value);
 }
 
+// Settings - set predefined themes to TextColor and BackgroundColor text inputs
 function SetThemeInputs(primary, background) {
     PageElement.s_maincolor.value = primary;
     PageElement.s_bgcolor.value = background;
     PreviewTheme();
 }
 
+// Apply theme from preferences to page 
 function SetColors() {
     PageElement.i_que.style.color = ResolveColor(Preference.maincolor);
     PageElement.i_ans.style.color = ResolveColor(Preference.maincolor);
     document.body.style.backgroundColor = ResolveColor(Preference.bgcolor);
 }
 
-
+// Define custom color values for i.e. random/custom values
 function ResolveColor(color) {
-    if (color != "dynamic") return color;
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += Math.floor(Math.random() * 10);
+    switch (color) {
+        case "dynamic":
+            newColor = '#';
+            for (var i = 0; i < 6; i++) {
+                newColor += Math.floor(Math.random() * 10);
+            }
+            return newColor;
+        default:
+            return color;
     }
-    return color;
 }
 
+// Adding input listener to answer input
 function AddInputListener() {
     PageElement.i_ans.addEventListener("keyup", function (event) {
         if (event.key === "," || event.key === "." || event.key === "Enter") {
@@ -159,6 +174,7 @@ function AddInputListener() {
     });
 }
 
+// Startup tasks
 function Startup() {
     SetElements();
     ReadPref();
@@ -166,6 +182,7 @@ function Startup() {
     AddInputListener();
 }
 
+// wrong answer animation and its timing in js
 const animation = [
     { transform: "translate(50px, 0px)" },
     { transform: "translate(-50px, 0px)" },
