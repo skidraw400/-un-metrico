@@ -1,3 +1,10 @@
+/**
+ * (un)metrico main source code
+ * © 2023 skidraw400 <skidraw400@gmail.com>
+ * @author skidraw400
+ */
+
+
 // (re)declaring html locations
 const PageElement = {}
 function SetElements() {
@@ -15,15 +22,16 @@ function SetElements() {
     PageElement.ts_background = document.getElementById('ts-background');
 }
 
-// preferences
+// js preferences storing
 const Preference = {
     "accuracy": 0,
     "units": 0,
-    "maincolor": "#FFFFFF",
-    "bgcolor": "dynamic",
+    "maincolor": "random-light",
+    "bgcolor": "#212529",
     "hidelogo": false
 }
 
+// saving js preferences to localstorage
 function SavePref() {
     localStorage.setItem("accuracy", PageElement.s_acc.value);
     localStorage.setItem("units", PageElement.s_units.value);
@@ -35,6 +43,7 @@ function SavePref() {
     SetValue();
 }
 
+// reading js preferences from localstorage to js, also defaults redefinition
 function ReadPref() {
     Preference.accuracy = localStorage.getItem('accuracy') || 0;
     PageElement.s_acc.selectedIndex = Preference.accuracy;
@@ -42,10 +51,10 @@ function ReadPref() {
     Preference.units = localStorage.getItem('units') || 0;
     PageElement.s_units.selectedIndex = Preference.units;
 
-    Preference.maincolor = localStorage.getItem('maincolor') || "#FFFFFF";
+    Preference.maincolor = localStorage.getItem('maincolor') || "random-light";
     PageElement.s_maincolor.value = Preference.maincolor;
 
-    Preference.bgcolor = localStorage.getItem('bgcolor') || "dynamic";
+    Preference.bgcolor = localStorage.getItem('bgcolor') || "#212529";
     PageElement.s_bgcolor.value = Preference.bgcolor;
 
     PreviewTheme();
@@ -55,7 +64,7 @@ function ReadPref() {
     if (Preference.hidelogo) PageElement.o_logo.innerHTML = "";
     else PageElement.o_logo.innerHTML = "(un)metrico";
 
-    console.log("settings", {
+    console.debug("settings", {
         "accuracy": Preference.accuracy,
         "units": Preference.units,
         "maincolor": Preference.maincolor,
@@ -64,54 +73,94 @@ function ReadPref() {
     })
 }
 
-
+// core code for calculating question and answer
 function CalculateValue(unitType, min, max) {
     let sourceUnit, convertedUnit, sourceValue, randomConvertedValue;
     randomConvertedValue = Math.round(Math.random() * (max - min) + min);
-    if (unitType == 0) {
-        convertedUnit = "km/h";
-        sourceUnit = "mph";
-        sourceValue = randomConvertedValue / 1.60934;
-    } else if (unitType == 1) {
-        convertedUnit = "mph";
-        sourceUnit = "km/h";
-        sourceValue = randomConvertedValue * 1.60934;
-    } else if (unitType == 2) {
-        convertedUnit = "°C";
-        sourceUnit = "°F";
-        sourceValue = (randomConvertedValue * 9 / 5) + 32;
-    } else if (unitType == 3) {
-        convertedUnit = "°F";
-        sourceUnit = "°C";
-        sourceValue = (randomConvertedValue - 32) * 5 / 9;
+    switch (unitType.toString()) {
+        case "0":
+            convertedUnit = "km/h";
+            sourceUnit = "mph";
+            sourceValue = randomConvertedValue / 1.60934;
+            break;
+        case "1":
+            convertedUnit = "mph";
+            sourceUnit = "km/h";
+            sourceValue = randomConvertedValue * 1.60934;
+            break;
+        case "2":
+            convertedUnit = "°C";
+            sourceUnit = "°F";
+            sourceValue = (randomConvertedValue * 9 / 5) + 32;
+            break;
+        case "3":
+            convertedUnit = "°F";
+            sourceUnit = "°C";
+            sourceValue = (randomConvertedValue - 32) * 5 / 9;
+            break;
+        case "4":
+            convertedUnit = "cm";
+            sourceUnit = "inch";
+            sourceValue = randomConvertedValue / 2.54;
+            break;
+        case "5":
+            convertedUnit = "inch";
+            sourceUnit = "cm";
+            sourceValue = randomConvertedValue * 2.54;
+            break;
     }
     return [Math.round(sourceValue), randomConvertedValue, sourceUnit, convertedUnit];
 }
 
-// Generating question
+// Choosing right range, generating and displaying question
 let answer;
 function SetValue() {
     if (answer) PageElement.o_last.innerHTML = "Last: " + answer;
-    let values = CalculateValue(Preference.units, 0, 100);
+    var min, max;
+    switch (Preference.units.toString()) {
+        case "0": //answer in km/h
+            min = 5
+            max = 250
+            break;
+        case "1": //answer in mph
+            min = 5
+            max = 150
+            break;
+        case "2": //answer in °C
+            min = 0
+            max = 250
+            break;
+        case "3": //answer in °F
+            min = 0
+            max = 500
+            break;
+        case "4": //answer in inches
+            min = 5
+            max = 40
+            break;
+        case "5": //answer in cm
+            min = 5
+            max = 100
+            break;
+    }
+    let values = CalculateValue(Preference.units, min, max);
     let value = values[0];
     const sourceUnit = values[2];
     answer = values[1];
     PageElement.i_que.innerHTML = value + sourceUnit;
-    console.log("value", value, "answer", answer);
+    console.debug("value", value, "answer", answer);
     SetColors();
 }
 
+// verifying input and displaying result
 function GetValue() {
     let input = PageElement.i_ans.value.replace(/\D/g, '');
     let acc = 1;
-    if (Preference.accuracy == 0) {
-        acc = 1;
-    } else if (Preference.accuracy == 1) {
-        acc = 3;
-    } else if (Preference.accuracy == 2) {
-        acc = 5;
-    } else if (Preference.accuracy == 3) {
-        acc = 10;
+    switch (Preference.accuracy.toString()) {
+        case "0": acc = 1; break;
+        case "1": acc = 3; break;
+        case "2": acc = 5; break;
+        case "3": acc = 10; break;
     }
     if (Math.abs(Math.floor(input) - answer) <= acc) {
         SetValue();
@@ -124,33 +173,56 @@ function GetValue() {
     }
 }
 
+// Preview theme in preferences
 function PreviewTheme() {
     PageElement.ts_background.style.backgroundColor = ResolveColor(PageElement.s_bgcolor.value);
     PageElement.ts_primary.style.color = ResolveColor(PageElement.s_maincolor.value);
 }
 
+// Settings - set predefined themes to TextColor and BackgroundColor text inputs
 function SetThemeInputs(primary, background) {
     PageElement.s_maincolor.value = primary;
     PageElement.s_bgcolor.value = background;
     PreviewTheme();
 }
 
+// Apply theme from preferences to page 
 function SetColors() {
     PageElement.i_que.style.color = ResolveColor(Preference.maincolor);
     PageElement.i_ans.style.color = ResolveColor(Preference.maincolor);
     document.body.style.backgroundColor = ResolveColor(Preference.bgcolor);
 }
 
-
+// Define custom color values for i.e. random/custom values
 function ResolveColor(color) {
-    if (color != "dynamic") return color;
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += Math.floor(Math.random() * 10);
+    let answer = color;
+    switch (color) {
+        case "random-dark":
+            answer = "#";
+            for (var i = 0; i < 6; i++) {
+                answer += Math.floor(Math.random() * 8);
+            }
+            break;
+        case "random-light":
+            answer = '#';
+            var hexLetters = 'BCDEF'.split('');
+            for (var i = 0; i < 6; i++) {
+                answer += hexLetters[Math.floor(Math.random() * hexLetters.length)];
+            }
+            break;
+        case "random":
+            answer = '#';
+            var hexLetters = '0123456789ABCDEF'.split('');
+            for (var i = 0; i < 6; i++) {
+                answer += hexLetters[Math.floor(Math.random() * hexLetters.length)];
+            }
+        default:
+            break;
     }
-    return color;
+    return answer
 }
 
+// Adding input listener to answer input
 function AddInputListener() {
     PageElement.i_ans.addEventListener("keyup", function (event) {
         if (event.key === "," || event.key === "." || event.key === "Enter") {
@@ -159,6 +231,7 @@ function AddInputListener() {
     });
 }
 
+// Startup tasks
 function Startup() {
     SetElements();
     ReadPref();
@@ -166,6 +239,7 @@ function Startup() {
     AddInputListener();
 }
 
+// wrong answer animation and its timing in js
 const animation = [
     { transform: "translate(50px, 0px)" },
     { transform: "translate(-50px, 0px)" },

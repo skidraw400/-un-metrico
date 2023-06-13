@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon image_src" href="./apple-touch-icon.png">
+    <link rel="icon" href="./images/icons/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./images/icons/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon image_src" href="./images/icons/apple-touch-icon.png">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/style.css">
     <link rel="manifest" href="./manifest.json">
@@ -19,7 +19,7 @@
             navigator.serviceWorker.register('./service-worker.js').then(function (registration) {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
             }).catch(function (err) {
-                console.log('ServiceWorker registration failed: ', err);
+                console.warn('ServiceWorker registration failed: ', err);
             });
         }
     </script>
@@ -30,7 +30,7 @@
     <nav class="navbar navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <!-- bar -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" name="Menu"
                 data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -53,7 +53,7 @@
                         </li>
                         <li class=" list-group-item py-3">
                             <h5>Required accuracy</h5>
-                            <select class="form-select" aria-label="Accuracy" id="acc">
+                            <select class="form-select" name="Accuracy" aria-label="Accuracy" id="acc">
                                 <option value="0">1</option>
                                 <option value="1">3</option>
                                 <option value="2">5</option>
@@ -62,19 +62,22 @@
                         </li>
                         <li class="list-group-item py-3">
                             <h5>Units</h5>
-                            <select class="form-select" aria-label="Units" id="units">
-                                <option value="0">mph -> km/h</option>
-                                <option value="1">km/h -> mph</option>
-                                <option value="2">°F -> °C</option>
-                                <option value="3">°C -> °F</option>
+                            <select class="form-select" name="Unit selector" aria-label="Units" id="units">
+                                <option value="0">mph ➜ km/h</option>
+                                <option value="1">km/h ➜ mph</option>
+                                <option value="2">°F ➜ °C</option>
+                                <option value="3">°C ➜ °F</option>
+                                <option value="4">inch ➜ cm</option>
+                                <option value="4">cm ➜ inch</option>
                             </select>
                         </li>
                         <li class="list-group-item py-3">
                             <h5>Theme</h5>
-                            <select class="form-select mt-2" aria-label="Theme" id="theme" onchange="let args = this.value.split(' '); SetThemeInputs(args[0], args[1])">
+                            <select class="form-select mt-2" aria-label="Theme" id="theme" name="Theme selector"
+                                onchange="let args = SetThemeInputs(this.value.split(' ')[0], this.value.split(' ')[1])">
                                 <option selected disabled></option>
-                                <option value="white dynamic">Colorful (default)</option>
-                                <option value="white #212529">Dark</option>
+                                <option value="random-light #212529">Dark (default)</option>
+                                <option value="white random-dark">Colorful</option>
                                 <option value="white black">OLED</option>
                                 <option value="#2a3001 #e0d8b4">Olive</option>
                                 <option value="#00FF41 black">Matrix</option>
@@ -84,18 +87,29 @@
                                 <div id="ts-primary" class="fs-2 w-100 text-center">Aa</div>
                             </div>
                             <label>Text color</label>
-                            <input type="text" class="form-control my-2" id="i_maincolor" oninput="PreviewTheme();">
+                            <input type="text" class="form-control my-2" id="i_maincolor" oninput="PreviewTheme();"
+                                name="text color">
                             <label>Background color</label>
-                            <input type="text" class="form-control my-2" id="i_bgcolor" oninput="PreviewTheme();">
+                            <input type="text" class="form-control my-2" id="i_bgcolor" oninput="PreviewTheme();"
+                                name="background color">
                         </li>
                         <li class="list-group-item py-3">
-                            <input class="form-check-input me-1" type="checkbox" id="i_hidelogo">
+                            <input class="form-check-input me-1" type="checkbox" id="i_hidelogo" name="Hide logo">
                             <label class="form-check-label" for="i_hidelogo">Hide logo</label>
                         </li>
-                        <li class="list-group-item">
-                            <button type="button" class="btn btn-secondary mt-3 w-100" onclick="SavePref();"
-                                data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
-                                aria-controls="offcanvasDarkNavbar">Save</button>
+                        <li class="list-group-item py-3">
+                            <div class="row">
+                                <div class="col col-8">
+                                    <button type="button" class="btn btn-primary w-100" onclick="SavePref();"
+                                        data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
+                                        aria-controls="offcanvasDarkNavbar">Save</button>
+                                </div>
+                                <div class="col col-4">
+                                    <button type="button" class="btn btn-danger w-100"
+                                        onclick="localStorage.clear(); location.reload();"
+                                        aria-controls="offcanvasDarkNavbar">Reset</button>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -104,7 +118,7 @@
     </nav>
 
     <div class="container-fluid h100 p-0" id="container">
-        <input type="text" inputmode="decimal" id="answerinput">
+        <input type="text" inputmode="decimal" id="answerinput" name="Answer input">
         <div id="question">
             Enable JavaScript
         </div>
