@@ -16,18 +16,17 @@
     <!-- <script src="./dist/main.js"></script> -->
     <!-- new one, compiled from TS -->
     <script src="./dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./dist/ts/script.js"></script>
 
     <title>(un)metrico</title>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./dist/service-worker.js').then(function (registration) {
-                console.log('ServiceWorker registration successful with scope: ', registration.scope);
-            }).catch(function (err) {
-                console.warn('ServiceWorker registration failed: ', err);
-            });
-        }
+        // if ('serviceWorker' in navigator) {
+        //     navigator.serviceWorker.register('./service-worker.js').then(function (registration) {
+        //         console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        //     }).catch(function (err) {
+        //         console.warn('ServiceWorker registration failed: ', err);
+        //     });
+        // }
     </script>
 </head>
 
@@ -106,7 +105,7 @@
                         <li class="list-group-item py-3">
                             <div class="row">
                                 <div class="col col-8">
-                                    <button type="button" class="btn btn-primary w-100" onclick="SavePref();"
+                                    <button type="button" class="btn btn-primary w-100" onclick="saveSettings();"
                                         data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
                                         aria-controls="offcanvasDarkNavbar">Save</button>
                                 </div>
@@ -130,9 +129,7 @@
         </div>
     </div>
 
-    <script>
-        Startup();
-    </script>
+    <script src="./dist/ts/script.js"></script>
 </body>
 
 </html>
