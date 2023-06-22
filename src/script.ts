@@ -1,0 +1,1 @@
+var x: void = alert("TS working");
